@@ -9,7 +9,7 @@ import {
 } from "./dialog";
 
 interface ModalProps {
-   children: React.ReactNode;
+   children?: React.ReactNode;
    title: string;
    description?: string;
    isOpen: boolean;
@@ -63,13 +63,15 @@ const Modal: React.FC<ModalProps> = ({
 
             {showFooter && (
                <DialogFooter>
-                  <Button variant={"outline"} onClick={onClose}>
+                  <Button variant={submitVariant} onClick={onClose} className="cursor-pointer">
                      {cancelText}
                   </Button>
                   {onSubmit && (
                      <Button
-                        className="bg-indigo-400 hover:bg-indigo-500 text-white"
-                        onClick={hanldeSubmit}>
+                        className="bg-indigo-400 hover:bg-indigo-500 text-white cursor-pointer"
+                        onClick={hanldeSubmit}
+                        variant={submitVariant}
+                        >
                         {submitText}
                      </Button>
                   )}

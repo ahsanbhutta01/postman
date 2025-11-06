@@ -4,9 +4,7 @@ import { dbConnection } from "@/lib/db";
 import { currentUser } from "@/modules/authentication/actions";
 import Workspace from "@/models/workspace.model";
 import WorkspaceMember from "@/models/workspaceMember.model";
-
-
-
+import "@/models/user.model";
 
 export const initializeWorkspace = async () => {
    const user = await currentUser();
@@ -25,11 +23,9 @@ export const initializeWorkspace = async () => {
       if (!workspace) {
          workspace = new Workspace({
             name: "Personal Workspace",
-            description:
-               "Default workspace for personal use",
+            description: "Default workspace for personal use",
             ownerId: user._id,
          });
-
          await workspace.save();
 
          const member = new WorkspaceMember({
@@ -37,7 +33,6 @@ export const initializeWorkspace = async () => {
             workspaceId: workspace._id,
             role: "ADMIN",
          });
-
          await member.save();
 
          workspace.members.push(member._id);
@@ -56,10 +51,7 @@ export const initializeWorkspace = async () => {
       console.error("Error initializing workspace:", error);
       return {
          success: false,
-         error:
-            error instanceof Error
-               ? error.message
-               : "Unknown error",
+         error: error instanceof Error ? error.message : "Unknown error",
       };
    }
 };
@@ -71,15 +63,12 @@ export async function getWorkspaces() {
    try {
       await dbConnection();
       const workspaces = await Workspace.find({
-         $or: [
-            { ownerId: user._id },
-            { members: user._id },
-         ],
+         $or: [{ ownerId: user._id }, { members: user._id }],
       })
          .populate("members")
          .populate("ownerId")
          .lean()
-         .exec()
+         .exec();
 
       return JSON.parse(JSON.stringify(workspaces));
    } catch (error) {
@@ -93,7 +82,7 @@ export async function createWorkspaces(name: string) {
    if (!user) throw new Error("Unathorized");
 
    try {
-      await dbConnection()
+      await dbConnection();
       const workspace = new Workspace({
          name,
          ownerId: user._id,
@@ -119,18 +108,15 @@ export async function createWorkspaces(name: string) {
    }
 }
 
-
 export async function getWorkspaceById(id: string) {
    try {
       await dbConnection();
-      
-      const workspace = await Workspace.findById(id)
-         .populate("members")
 
-      return workspace;
+      const workspace = await Workspace.findById(id).populate("members");
+
+      return JSON.parse(JSON.stringify(workspace));
    } catch (error) {
       console.error("Error getting workspace by id:", error);
       throw error;
    }
 }
-

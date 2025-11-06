@@ -20,6 +20,12 @@ const workspaceSchema = new mongoose.Schema(
             ref: "WorkspaceMember",
          },
       ],
+      collections:[
+         {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "Collection",
+         },
+      ]
    },
    {
       timestamps: true, 

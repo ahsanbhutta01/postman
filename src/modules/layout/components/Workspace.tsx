@@ -1,10 +1,10 @@
 "use client";
 
-import Loader from "@/app/(workspace)/loading";
+
 import { Button } from "@/components/ui/button";
 import { Hint } from "@/components/ui/hint";
 import { useWorkspaces } from "@/modules/workspace/hooks/workspace";
-import { Plus, User } from "lucide-react";
+import { Loader, Plus, User } from "lucide-react";
 import { useWorkspaceStore } from "../store";
 import { useEffect, useState } from "react";
 import {
@@ -28,7 +28,13 @@ const Workspace = () => {
       }
    }, [workspaces, selectedWorkspace, setSelectedWorkspace]);
 
-   if (isLoading) return <Loader />;
+   if (isLoading) {
+      return (
+         <div className="flex flex-col items-center justify-center h-full">
+            <Loader className="animate-spin size-6 text-indigo-500"/>
+         </div>
+      )
+   }
    if (!workspaces || workspaces.length === 0) {
       return (
          <div className="font-semibold text-indigo-400">No Workspace Found</div>
