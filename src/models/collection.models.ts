@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Request from "./request.model";
 
 const collectionSchema = new mongoose.Schema(
    {
@@ -9,8 +10,8 @@ const collectionSchema = new mongoose.Schema(
       },
       name: {
          type: String,
-         required: true
-      }
+         required: true,
+      },
    },
    { timestamps: true }
 );
@@ -20,16 +21,13 @@ collectionSchema.pre(
    { document: true, query: false },
    async function (next) {
       try {
-         await mongoose
-            .model("Collection")
-            .deleteMany({ workspaceId: this._id });
+         await Request.deleteMany({ collectionId: this._id }); // ✅ delete related requests
          next();
       } catch (err) {
          next(err as Error);
       }
    }
 );
-
 const Collection =
    mongoose.models.Collection || mongoose.model("Collection", collectionSchema);
 
