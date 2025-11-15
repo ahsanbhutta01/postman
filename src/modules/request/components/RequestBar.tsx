@@ -25,15 +25,23 @@ interface Props {
 }
 
 const RequestBar = ({ tab, updateTab }: Props) => {
-
-   function onSendRequest(){}
+   function onSendRequest() {}
 
    return (
       <div className="flex flex-row items-center justify-between bg-zinc-900 rounded-md px-2 py-2 w-full">
          <div className="flex flex-row items-center gap-2 flex-1">
             <Select
                value={tab?.method}
-               onValueChange={(value) => updateTab(tab._id, { method: value })}>
+               onValueChange={(value) =>
+                  updateTab(tab._id, {
+                     method: value as
+                        | "GET"
+                        | "POST"
+                        | "PUT"
+                        | "PATCH"
+                        | "DELETE",
+                  })
+               }>
                <SelectTrigger
                   className={`w-24  ${
                      requestColorMap[tab?.method] || "text-white"

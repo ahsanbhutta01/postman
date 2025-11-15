@@ -8,6 +8,7 @@ import TabBar from "./TabBar";
 import { useHotkeys } from "react-hotkeys-hook";
 import { toast } from "sonner";
 import RequestEditor from "./RequestEditor";
+import SaveRequestToCollectionModal from "@/modules/collections/components/SaveRequestCollectionModal";
 
 const RequestPlayground = () => {
    const { tabs, activeTabId, addTab } = useRequestPlaygroundStore();
@@ -29,6 +30,65 @@ const RequestPlayground = () => {
          enableOnFormTags: true,
       },
       []
+   );
+
+   function getCurrentRequestData() {
+      if (!activeTab) {
+         return {
+            name: "Untitled",
+            method: "GET" as const,
+            url: "https://echo.hoppscotch.io",
+         };
+      }
+
+      return {
+         name: activeTab.title,
+         method: activeTab.method as
+            | "GET"
+            | "POST"
+            | "PUT"
+            | "PATCH"
+            | "DELETE",
+         url: activeTab.url,
+      };
+   }
+   useHotkeys(
+      "ctrl+s, meta+s",
+      async (e) => {
+         e.preventDefault();
+         e.stopPropagation();
+
+         if (!activeTab) {
+            toast.error("No active request to save");
+            return;
+         }
+
+         if (activeTab.requestId && activeTab.collectionId) {
+            try {
+               await mutateAsync({
+                  url: activeTab.url || "https://echo.hoppscotch.io",
+                  method: activeTab.method as
+                     | "GET"
+                     | "POST"
+                     | "PUT"
+                     | "PATCH"
+                     | "DELETE",
+                  name: activeTab.title || "Untitled Request",
+                  body: activeTab.body,
+                  headers: activeTab.headers,
+                  parameters: activeTab.parameters,
+               });
+               toast.success("Request Updated");
+            } catch (error) {
+               toast.error("Failed to update request");
+               console.error("Failed to update request", error);
+            }
+         } else {
+            setShowSaveModal(true);
+         }
+      },
+      { preventDefault: true, enableOnFormTags: true },
+      [activeTab]
    );
 
    if (!activeTab) {
@@ -64,8 +124,14 @@ const RequestPlayground = () => {
       <div className="flex flex-col h-full">
          <TabBar />
          <div className="flex-1 overflow-auto">
-            <RequestEditor/>
+            <RequestEditor />
          </div>
+         <SaveRequestToCollectionModal
+            isModalOpen={showSaveModal}
+            setIsModalOpen={setShowSaveModal}
+            requestData={getCurrentRequestData()}
+            initialName={getCurrentRequestData().name}
+         />
       </div>
    );
 };

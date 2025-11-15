@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useRequestPlaygroundStore } from "../store/useRequestStore";
 import { cn } from "@/lib/utils";
 import { Plus, X } from "lucide-react";
+import AddNameModal from "./AddNameModal";
 
 const requestColorMap: Record<string, string> = {
    GET: "text-green-500",
@@ -15,8 +16,12 @@ const TabBar = () => {
    const { tabs, activeTabId, setActiveTab, addTab, closeTab } =
       useRequestPlaygroundStore();
    const [selectedTabId, setSelectedTabId] = useState<string | null>(null);
+   const [renameModalOpen, setRenameModalOpen] = useState(false);
 
-   function onDoubleClick(id: string) {}
+   function onDoubleClick(tabId: string) {
+      setSelectedTabId(tabId);
+      setRenameModalOpen(true);
+   }
 
    return (
       <>
@@ -58,9 +63,17 @@ const TabBar = () => {
             <button
                onClick={addTab}
                className="px-3 py-2 dark:text-zinc-400 text-white cursor-pointer hover:text-white">
-               <Plus className="size-5 font-bold"/>
+               <Plus className="size-5 font-bold" />
             </button>
          </div>
+
+         {selectedTabId && (
+            <AddNameModal
+               isModalOpen={renameModalOpen}
+               setIsModalOpen={setRenameModalOpen}
+               tabId={selectedTabId}
+            />
+         )}
       </>
    );
 };

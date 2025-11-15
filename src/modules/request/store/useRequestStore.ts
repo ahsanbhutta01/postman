@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 export type RequestTab = {
    _id: string;
    title: string;
-   method: string;
+   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
    url: string;
    body?: string;
    headers?: string;
@@ -18,7 +18,7 @@ export type RequestTab = {
 interface SavedRequest {
    _id: string;
    name: string;
-   method: string;
+   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
    url: string;
    body?: string;
    headers?: string;
@@ -131,7 +131,7 @@ export const useRequestPlaygroundStore = create<PlaygroundState>((set) => ({
             t._id === tabId
                ? {
                     ...t,
-                    _id: savedRequest._id,
+                    _id: savedRequest?._id,
                     title: savedRequest.name,
                     method: savedRequest.method,
                     body: savedRequest?.body,
